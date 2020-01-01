@@ -1,10 +1,3 @@
----
-title: "Processing of Various Files"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
----
 ### Processing of Files Used in Figure 3 and 4 Is Described.
 ***
 ### Enhancer/Super-enhancer  
