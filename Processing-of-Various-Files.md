@@ -4,9 +4,6 @@ output:
   word_document: 
     keep_md: yes
     reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
-  pdf_document: default
 ---
 ### Processing of Files Used in Figure 3 and 4 Is Described.
 ***
