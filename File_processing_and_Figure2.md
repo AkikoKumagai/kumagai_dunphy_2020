@@ -1,14 +1,3 @@
----
-title: "File Processing and Scripts"
-author: "Kumagai and Dunphy (2020)"
-output:
-  word_document:
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document: default
-  pdf_document: default
----
-
 ## File processing 
 Trim Fastq files.
 
