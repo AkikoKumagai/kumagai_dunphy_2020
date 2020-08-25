@@ -1,18 +1,11 @@
----
-title: "Figure 7"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
-  pdf_document: 
-    keep_tex: yes
----
-### Figure 7A 
+Figure 7
+================
+
+### Figure 7A
+
 Make a control file for initiation zones using regioneR.
 
-```r
+``` r
 library(regioneR)
 
 initiation_zone <- read.delim("bed_files/Initiation_zones.bed", 
@@ -28,8 +21,7 @@ write.table(toDataframe(control_zone), file = "control_initiation_zone.bed",
 
 Count MTBP peaks and YY1 peaks in initiation zones.
 
-
-```bash
+``` bash
 # Count the number of MTBP peaks per initiation zone and control zone.
 bedtools intersect -a bed_files/Initiation_zones.bed -b bed_files/MTBP.bed -c > Init_zone_MTBP.bed
 bedtools intersect -a control_initiation_zone.bed -b bed_files/MTBP.bed  \ 
@@ -41,10 +33,10 @@ bedtools intersect -a control_initiation_zone.bed -b YY1.bed \
 -c > control_zone_YY1.bed
 ```
 
-Draw graphs comparing YY1 and MTBP in initiation zones and control zones.
+Draw graphs comparing YY1 and MTBP in initiation zones and control
+zones.
 
-
-```r
+``` r
 library(dplyr)
 library(ggpubr)
 library(ggsci)
@@ -89,10 +81,12 @@ Fig7Ar <- ggboxplot(YY1count, x="groups", y= "peaks_per_100kb",
 MTBPcount %>% group_by(groups) %>% tally(mean(peaks_per_100kb))
 YY1count %>% group_by(groups) %>% tally(mean(peaks_per_100kb))
 ```
-***
-### Figures 7B and S7A\
 
-```r
+-----
+
+### Figures 7B and S7A  
+
+``` r
 # Obtain the coordinates for the centers of initiation zones.  
 sorted_initiation_zone <- initiation_zone %>% 
     mutate(chr = V1, size = V3-V2, center = V2 + as.integer(size/2)) %>% 
@@ -106,15 +100,18 @@ write.table(sorted_initiation_zone, "Initiation_center_sorted.bed", quote = F,
 # This file was used to create Heatmaps.  
 ```
 
-For heatmaps in Figure S7A, TSS file that covers 2000 bp downstream and upstream was used to increase the signal.  
+For heatmaps in Figure S7A, TSS file that covers 2000 bp downstream and
+upstream was used to increase the signal.
 
-***
+-----
+
 ### Figures 7C and S7B
-YY1 HiChIP data is aligned to hg19 genome.  MTBP.bw and EdU_seq data were converted to hg19.
-YY1_HICHIP data in HCT116 was downloaded from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2774000.
 
+YY1 HIChIP data is aligned to hg19 genome. MTBP.bw and EdU\_seq data
+were converted to hg19. YY1\_HICHIP data in HCT116 was downloaded from
+<https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2774000>.
 
-```r
+``` r
 library(regioneR)
 library(dplyr)
 library(readr)
@@ -142,17 +139,18 @@ write.table(toDataframe(random), file = "random.bed", sep="\t",
             col.names = FALSE, row.names = FALSE, quote=FALSE)
 ```
 
-Intersect with initiation zones.
+Intersect with initiation
+zones.
 
-
-```bash
+``` bash
 bedtools intersect -a EdU_hg19.bed -b yy1_start1_end2.bed -loj > overlapped_YY1.bed;
 bedtools intersect -a random.bed -b yy1_start1_end2.bed \ 
 -loj > overlapped_YY1_random.bed
 ```
+
 Count the sum of PET scores per initiation zone.
 
-```r
+``` r
 detach(package:dplyr)
 library(plyr)
 library(dplyr)

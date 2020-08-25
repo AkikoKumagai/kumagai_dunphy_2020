@@ -1,18 +1,14 @@
----
-title: "Figure 6"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
----
+Figure 6
+================
 
 ### Processing of the files from EdU-seq experiments
-### Making EdU_seq.bw files (Figure 6A and Figure S6B)
-The three replicates of files were aligned to the human genome in the same manner as CUT&RUN samples.
 
-```bash
+### Making EdU\_seq.bw files (Figure 6A and Figure S6B)
+
+The three replicates of files were aligned to the human genome in the
+same manner as CUT\&RUN samples.
+
+``` bash
 # Made bw files using Deeptools bamCoverage as follows:
 for file in *.bam; do bamCoverage -b ${file} -o bw_files/${file/%.bam/.bw} -bs 50 \
 --normalizeUsing RPGC -p max --ignoreDuplicates --effectiveGenomeSize 2913022398 \
@@ -44,10 +40,12 @@ awk 'OFS = "\t"{print $1, $2, $3, $4/3}' EdU-seq.bedgraph | sort -k 1,1 -k2,2n \
 bedGraphToBigWig EdU-seq_sorted.bedgraph hg38.chrom.sizes  EdU_seq_WT.bw
 # Do the above for EdU_seq_deltaC.bw
 ```
-***
-### Use HOMER to call peaks.\
 
-```bash
+-----
+
+### Use HOMER to call peaks.  
+
+``` bash
 makeTagDirectory EdU_seq_WT_rep1/ -sspe EdU_seq_WT_rep1.bam;
 makeTagDirectory EdU_cont_rep1/ -sspe EdU_cont_rep1.bam;
 # Repeat for other two replicates.
@@ -64,11 +62,14 @@ EdU_EdU1.txt_EdU2.txt_EdU3.txt > Initiation_zones.txt
 
 pos2bed.pl Initiation_zones.txt > Initiation_zones.bed # Initiation zones.
 ```
-***
+
+-----
+
 ### Figure S6C
+
 Check the size of the initiation zones.
 
-```r
+``` r
 library(dplyr)
 library(ggpubr)
 
@@ -91,18 +92,22 @@ total_length <- sum(Origins$size)  # kb
 # 143116282  Effective genome size hg38 2913022398
 143116282/2913022398 * 100  # 4.9% of the genome.
 ```
-***
-### Figure 6C \
 
-```bash
+-----
+
+### Figure 6C  
+
+``` bash
 # Compare the EdU-seq-WT, EdU-seq-deltaC, and EdU-control read counts. 
 multiBigwigSummary BED-file -b EdU_seq_WT_rep1.bw EdU_seq_WT_rep2.bw \ EdU_seq_WT_rep3.bw EdU_seq_deltaC_rep1.bw EdU_seq_deltaC_rep2.bw \ EdU_seq_deltaC_rep3.bw EdU_cont_rep1.bw EdU_cont_rep2.bw EdU_cont_rep3.bw \ --outRawCounts WT_deltaC_EdU.tab -p max --BED Initiation_zones.bed -o EdU_WT_deltaC.npz
 # This yields a file (WT_deltaC_EdU.tab) containing log2 average reads for each of the initiation zones.
 ```
-***
+
+-----
+
 Put the data in R.
 
-```r
+``` r
 library(tidyverse)
 library(ggpubr)
 library(ggpmisc)
@@ -129,11 +134,14 @@ Fig6C <- ggboxplot(EdU, x = "group", y = "average_reads", ylab = "Average Reads"
     scale_y_continuous(expand = c(0, 0)) + 
     stat_compare_means(paired = TRUE, label.y = 5, label.x = 2, label ="p.format")
 ```
-***
-### Figure 6D  
-Make control bed file (10,000 data points) with regioneR.  
 
-```r
+-----
+
+### Figure 6D
+
+Make control bed file (10,000 data points) with regioneR.
+
+``` r
 library(regioneR)
 control_summits<- createRandomRegions(nregions=10000, length.mean = 2, 
                                       length.sd = 0, genome= "hg38", mask=NULL)
@@ -141,8 +149,7 @@ write.table(toDataframe(control_summits), file = "control_summits.bed",
             sep="\t", col.names = FALSE, row.names = FALSE, quote=FALSE)
 ```
 
-
-```bash
+``` bash
 # Initiation zones around MTBP
 computeMatrix reference-point --referencePoint center -R Promoter_TSS_summits.bed \
 Enhancer_SuperEnhancer_summits.bed Others_summits.bed control_summits.bed  \
@@ -154,21 +161,26 @@ plotProfile -m RO_MTBP2.tab.gz -out Fig6D.pdf --regionsLabel "Promoter_TSS" \
 --yMax 0.6 --colors green red darkblue yellow --legendLocation upper-left \
 --refPointLabel "Center"
 ```
-***
+
+-----
+
 ### Figures 6E and 6F
-Look at MTBP peaks around TSS and group them according to the location of summits of MTBP relative to TSS.  (5′side of TSS or 3′ side of TSS) 
-TSS_2000.bed file is 1 kb upstream and 1 kb downstream of TSS.  MTBP summits that are within this region are selected.
 
+Look at MTBP peaks around TSS and group them according to the location
+of summits of MTBP relative to TSS. (5′side of TSS or 3′ side of TSS)
+TSS\_2000.bed file is 1 kb upstream and 1 kb downstream of TSS. MTBP
+summits that are within this region are
+selected.
 
-```bash
+``` bash
 bedtools intersect -a TSS_2000.bed -b MTBP_summits.bed -wa -wb > TSS_MTBP_peaks.bed
 bedtools intersect -a TSS_2000.bed -b MTBP_summits.bed -wa -v > TSS_noMTBP.bed
 ```
 
-Separate the MTBP peaks with summits on the 5′ side of TSS and 3′ side of TSS.
+Separate the MTBP peaks with summits on the 5′ side of TSS and 3′ side
+of TSS.
 
-
-```r
+``` r
 library(dplyr)
 library(readr)
 TSS_MTBP <- read.delim("../TSS_MTBP_peaks.bed", header = F)
@@ -200,8 +212,7 @@ tss <- read.delim("../TSS.bed", header = F)
 
 Draw the graph of MTBP peaks (6E) and EdU-seq reads (6F).
 
-
-```bash
+``` bash
 # MTBP signal around TSS (Figure 6E)
 computeMatrix reference-point --referencePoint TSS -R TSS_MTBP_loc_right.bed \
 TSS_MTBP_loc_left.bed -S /WT.bw --missingDataAsZero -a 1000 -b 1000 --binSize 10 \
@@ -220,10 +231,10 @@ plotProfile -m TSS_RO_MTBP_rl.tab.gz -out Figure6F.pdf \
 --outFileNameData Figure6E.tab
 ```
 
-Calculate the EdU peak summits from TSS.  Sharp peaks around TSS (<500 bp) and broad peaks around 10 kb are observed.
+Calculate the EdU peak summits from TSS. Sharp peaks around TSS (\<500
+bp) and broad peaks around 10 kb are observed.
 
-
-```r
+``` r
 library(dplyr)
 library(ggpubr)
 library(ggpmisc)
@@ -254,21 +265,24 @@ ggplot(edu, aes(x = bins, y = left)) +
     panel_border(color = "black", size = 1, linetype = 1) 
 # bin = 200
 ```
-***
-### Replication Timing Data
-The files for HCT-116 were downloaded from https://www2.replicationdomain.com/database.php.
-The two files were merged.
 
-```bash
+-----
+
+### Replication Timing Data
+
+The files for HCT-116 were downloaded from
+<https://www2.replicationdomain.com/database.php>. The two files were
+merged.
+
+``` bash
 bedtools unionbedg -filler ″NA″ -i RT_HCT116_1.bdg RT_HCT116_2.bdg > merged_RT.txt  
 # The first few lines were edited out.
 awk 'OFS="\t"{print $1, $2, $3, ($4+$5)/2}' merged_RT.txt > RT_HCT116.bdg
 ```
 
-Segmentation was performed using DNAcopy in Bioconductor. 
+Segmentation was performed using DNAcopy in Bioconductor.
 
-
-```r
+``` r
 library(DNAcopy)
 
 RT <- read.delim("RT_HCT116.bdg", header = F, sep = "\t")
@@ -295,20 +309,22 @@ write.table(RT[,c("chrom", "start", "end", "num.mark", "seg.mean", "size")],
 # RT.bed describes the chr, start, end, RT_scores, and the size of the segments.
 ```
 
-Intersect RT.bed file with MTBP.bed file and count how many MTBP peaks are intersected with each replication timing segment.
+Intersect RT.bed file with MTBP.bed file and count how many MTBP peaks
+are intersected with each replication timing segment.
 
-
-```bash
+``` bash
 bedClip RT.bed hg38.chrom.sizes RT_c.bed  
 # Domains are clipped to the size within chromosomes.  
 
 bedtools intersect -a RT_c.bed -b bed_files/MTBP.bed -c > RT_MTBP_count.bed 
 ```
 
-For each timing segment, if average RT_score was more than 1.75, the segment was designated as "Early". If RT_score was less than -1.75, it was designated as "Late". If the score was in between, it was designated as "Mid". 
+For each timing segment, if average RT\_score was more than 1.75, the
+segment was designated as “Early”. If RT\_score was less than -1.75, it
+was designated as “Late”. If the score was in between, it was designated
+as “Mid”.
 
-
-```r
+``` r
 library(ggsci)
 
 RT_MTBP <- read.table("RT_MTBP_count.bed", header = F, sep = "\t")
@@ -343,23 +359,27 @@ write.table(RT_MTBP_T[, c(1:3, 9)], "RT_summary.bed", row.names=F,
             col.names=F, quote=F, sep="\t") 
 ```
 
-Intersect with replication timing file and initiation zone.
+Intersect with replication timing file and initiation
+zone.
 
-
-```bash
+``` bash
 bedtools intersect -a RT_summary.bed -b bed_files/Initiation_zones.bed  -c > \ RT_EdU_count.bed
 ```
-***
-### Figure S6A\
 
-```bash
+-----
+
+### Figure S6A  
+
+``` bash
 # Add replication timing information to MTBP peak file.
 bedtools intersect -a bed_files/MTBP.bed -b RT_summary.bed -wa -wb > MTBP_RT.bed 
 ```
-***
+
+-----
+
 Add data in R and plot.
 
-```r
+``` r
 MTBP <- read.delim("MTBP_peaks.txt", header = TRUE)
 MTBP_RT <- read.delim("MTBP_RT.bed", header = F) %>% select(PeakID = V4, RT = V14)
 MTBP_timing <- MTBP %>% left_join(MTBP_RT, by = "PeakID") %>% select(Location, RT) 
@@ -377,9 +397,9 @@ FigS6A <- ggbarplot(a, fill="Location", color = "white", y="n", x="RT",
                     palette = c("#008B45","#EE0000","#3B4992")) 
 ```
 
-### Figure 6B\
+### Figure 6B  
 
-```r
+``` r
 Fig6B <- ggboxplot(RT_MTBP_T, x="Timing", y= "peaks_per_100kb", 
                    xlab = "Replication Timing", ylab = "No. of Peaks/100kb",  
                    fill = "Timing", ylim = c(0,5), palette = get_palette("jco", 3),
@@ -390,17 +410,13 @@ Fig6B <- ggboxplot(RT_MTBP_T, x="Timing", y= "peaks_per_100kb",
 RT_MTBP_T %>% group_by(Timing) %>% tally(mean(peaks_per_100kb))
 ```
 
-### Figure S6D\
+### Figure S6D  
 
-```bash
+``` bash
 computeMatrix reference-point --referencePoint TSS -R TSS_MTBP_loc_right.bed \
 TSS_MTBP_loc_left.bed -S bw_files/WT.bw bw_files/deltaC.bw Refs/MNase_hg38.bw H3K4me2_DLD1.bw Refs/H3K4me1*.bigWig Refs/H3K4me2*.bigWig Refs/H3K4me3*.bigWig   Refs/H3K27ac.bw Refs/H3K9Ac*.bigWig Refs/YY1*.bigWig \
 --missingDataAsZero -a 1000 -b 1000 --binSize 10 \
 -out Matrix_TSS_MTBP_rl_H3.tab.gz;
 
 plotHeatmap -m Matrix_TSS_MTBP_rl_H3.tab.gz -out FigureS6D.pdf 
-
 ```
-
-
-

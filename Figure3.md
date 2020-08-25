@@ -1,15 +1,9 @@
----
-title: "Figure 3"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
----
-### Figure 3A\
+Figure 3
+================
 
-```r
+### Figure 3A  
+
+``` r
 # Pie plot for location of MTBP peaks.
 library(ggplot2)
 library(dplyr)
@@ -36,12 +30,16 @@ Fig3A <-ggplot(dat, aes(x="", y = prop, fill = MTBP)) +
     scale_fill_aaas(breaks = c("Promoter-TSS", "Enhancer Super-enhancer", 
                                "Others"))
 ```
-***
+
+-----
+
 ### Figures 3B, 3C, 3D, and S3B
-Figures 3B, 3C, and 3D were made using Deeptools computeMatrix and plotHeatmap. Figure S3B was made using Deeptools computeMatrix and plotProfile. 
 
+Figures 3B, 3C, and 3D were made using Deeptools computeMatrix and
+plotHeatmap. Figure S3B was made using Deeptools computeMatrix and
+plotProfile.
 
-```bash
+``` bash
 computeMatrix reference-point --referencePoint center \
 -R Promoter_TSS_summits.bed Enhancer_Superenhancer_summits.bed Other_summits.bed \
 -S WT.bw deltaC.bw Orc2.bw BG4.bw  --missingDataAsZero -a 3000 -b 3000 --binSize 10 \
@@ -50,12 +48,15 @@ computeMatrix reference-point --referencePoint center \
 plotHeatmap -m Matrix_Figure3B.tab.gz -out Figure3B.pdf --colorMap YlGnBu YlGnBu \
 Blues Blues --refPointLabel "Peak" --sortUsingSamples 4 --whatToShow "heatmap only"
 ```
-Figures 3C and 3D were made using "TSS_G4H.bed", "TSS_noG4H.bed", and "TSS_RNA.bed" files.  Figure S3B was made using "TSS.bed".  
+
+Figures 3C and 3D were made using “TSS\_G4H.bed”, “TSS\_noG4H.bed”, and
+“TSS\_RNA.bed” files. Figure S3B was made using “TSS.bed”.
 
 ### Figure S3C
+
 Correlation between transcription and MTBP peaks at TSS.
 
-```r
+``` r
 library(dplyr)
 library(ggpubr)
 MTBP4 <- read.delim("MTBP_peaks.txt", header = T) 
@@ -72,7 +73,3 @@ FigS3C <-ggscatter(data, x = "Transcription", y = "WT.score", color = "Blue",
                    size = 0.5, alpha = 0.4, ylim = c(80, 1500)) + 
     xscale("log10") + yscale("log10")
 ```
-
-
-
-

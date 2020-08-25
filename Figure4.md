@@ -1,16 +1,9 @@
----
-title: "Figure 4"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
----
+Figure 4
+================
 
-### Figure 4A\
+### Figure 4A  
 
-```r
+``` r
 library(dplyr)
 library(ggpubr)
 library(ggsci)
@@ -82,7 +75,7 @@ df_Enhancer_20000 %>% group_by(AP1) %>% tally()
 
 Perform Kolmogorov-Smirnov test (Supplementary Table S1)
 
-```r
+``` r
 library(dplyr)
 TSS_G4 <- df_TSS_10000 %>% filter(G4 == "G4")
 TSS_noG4 <- df_TSS_10000 %>% filter(G4 != "G4")
@@ -102,10 +95,12 @@ Enh.G4 <- ks.test(Enh_G4$Distance.to.Enhancer, Enh_noG4$Distance.to.Enhancer)
 TSS.AP1 <- ks.test(TSS_AP1$Distance.to.TSS, TSS_noAP1$Distance.to.TSS)
 Enh.AP1 <- ks.test(Enh_AP1$Distance.to.Enhancer, Enh_noAP1$Distance.to.Enhancer)
 ```
-***
-### Figure 4B\
 
-```r
+-----
+
+### Figure 4B  
+
+``` r
 # Obtain MTBP summits in Promoter-TSS, Enhancer/Super-enhancer, and Others.
 library(readr)
 summits <- MTBP6 %>% select(Chr, summit.start, summit.end, Location) 
@@ -114,8 +109,7 @@ summits %>% group_by(Location) %>%
 # This creates three bed files with summits of MTBP peaks.
 ```
 
-
-```bash
+``` bash
 computeMatrix reference-point --referencePoint center \
 -R Promoter_TSS_summits.bed Enhancer_SuperEnhancer_summits.bed Others_summits.bed \
 -S AP1.bw --missingDataAsZero -a 1000 -b 1000 --binSize 10 -out Figure4B.tab.gz
@@ -123,10 +117,12 @@ computeMatrix reference-point --referencePoint center \
 plotProfile -m Figure4B.tab.gz -out Figure4B.pdf --refPointLabel "MTBP" \
 --numPlotsPerRow 1 --perGroup --colors darkblue darkblue darkblue
 ```
-***
-### Figure 4C\
 
-```r
+-----
+
+### Figure 4C  
+
+``` r
 library(tidyr)
 t <- MTBP6 %>% group_by(Location, AP1, G4) %>% tally()
 
@@ -154,11 +150,12 @@ Fig4C <- ggbarplot(all_data, x="Location", y="Counts",  size = 0, ylab = FALSE,
                                             "#C7c7c7"), color = "white", 
                orientation = "horiz") 
 ```
-***
-### Figure S4C\
 
+-----
 
-```bash
+### Figure S4C  
+
+``` bash
 # Obtain summits in MTBP peaks containing AP-1 motifs. 
 # Also obtain matrix of AP-1 motifs near MTBP peaks. 
 bedtools intersect -a MTBP_summits.bed -b MTBP_AP1.bed -wa > MTBP_summits_AP1.bed
@@ -168,9 +165,10 @@ computeMatrix reference-point --referencePoint center -R MTBP_summits_AP1.bed \
 -out Matrix_MTBP_AP1.tab.gz 
 gunzip Matrix_MTBP_AP1.tab.gz
 ```
+
 Look at matrix in R.
 
-```r
+``` r
 library(ggpmisc)
 library(tidyr)
 library(cowplot)
@@ -244,11 +242,14 @@ FigS4C4 <- ggplot(right, aes(x = distance, y = count, group = location,
     xlab("Distance from MTBP Summits (bp)") + ylab("AP-1 Motif") 
 # bin size = 10  145 bp from the center.
 ```
-***
+
+-----
+
 ### Figure S4D
+
 Look at peaks at TSS to orient peaks.
 
-```bash
+``` bash
 #  Make TSS.bw file.
 sort -k1,1 -k2,2n TSS.bed | bedItemOverlapCount hg38 -chromSize=hg38.chrom.sizes \
 stdin > TSS.bedgraph
@@ -261,9 +262,11 @@ computeMatrix reference-point --referencePoint center -R Promoter_TSS_summits.be
 -out Matrix_MTBP_TSS.tab.gz 
 gunzip Matrix_MTBP_TSS.tab.gz
 ```
-Read the matrix in R.
 
-```r
+Read the matrix in
+R.
+
+``` r
 TSS_matrix <- read.delim("../Matrix_MTBP_TSS.tab", skip = 3, header = F)  %>%  
     select(-V4, -V5, -V6) %>% rename(Chr = V1, Start = V2, End = V3)
 

@@ -1,16 +1,9 @@
----
-title: "Figure 5"
-output:
-  word_document: 
-    keep_md: yes
-    reference_docx: word-styles-reference-01.docx
-  html_document:
-    df_print: paged
----
+Figure 5
+================
 
-### Figure 5C\
+### Figure 5C  
 
-```bash
+``` bash
 cat ../AP1.bed ../G4H_hg38_2_ref.bed > AP1_G4.bed
 bedtools slop -i ../bed_files/H3K4me2_DLD1.bed -b 200 -g ../../../hdd/refs/hg38.chrom.sizes > H3K4me2_400bp_DLD1.bed
 
@@ -20,9 +13,10 @@ bedtools intersect -a H3K4me2_400bp_DLD1.bed -b ../AP1.bed -wa -u > H3K4me2_AP1.
 bedtools intersect -a H3K4me2_400bp_DLD1.bed -b ../G4H_hg38_2_ref.bed -wa -u > H3K4me2_G4.bed;
 bedtools intersect -a H3K4me2_400bp_DLD1.bed -b ../bed_files/summits/MTBP_summits.bed -wa -u > H3K4me2_MTBP_summits.bed
 ```
+
 Put data into R and analyze.
 
-```r
+``` r
 library(tidyverse)
 library(ggpubr)
 
@@ -58,20 +52,28 @@ row.names(mat2)<- c("with_motif", "without_motif")
 test <- fisher.test(mat2)
 test
 ```
-***
+
+-----
+
 ### Figure 5D
 
-```bash
+``` bash
 computeMatrix reference-point --referencePoint center -p max -R Promoter_TSS_summits.bed  Enhancer_Superenhancer_summits.bed Other_summits.bed -S  ../bw_files/WT.bw ../bw_files/deltaC.bw  ../bw_files/H3K4me2_DLD1.bw  --missingDataAsZero -a 1000 -b 1000 --binSize 10 \
 -out Matrix_WT_deltaC_H3K4me2_2.tab.gz
 
 plotHeatmap -m Matrix_WT_deltaC_H3K4me2_2.tab.gz -out Fig5D.pdf --colorMap  YlGnBu YlGnBu Blues Greens --refPointLabel "Peak" --sortUsingSamples 1 --zMax 20 20 80  --whatToShow "heatmap and colorbar"
 ```
-***
-### Figures 5E and 5F
-Use left_MTBP_TGAGTCA.bed and right_MTBP_TGAGTCA.bed to make a new bed file with strand orientations in column 6.  Make right peaks as "+" and left as "-".
 
-```bash
+-----
+
+### Figures 5E and 5F
+
+Use left\_MTBP\_TGAGTCA.bed and right\_MTBP\_TGAGTCA.bed to make a new
+bed file with strand orientations in column 6. Make right peaks as “+”
+and left as
+“-”.
+
+``` bash
 awk 'OFS = "\t"{print $0,".",".", "+"}' right_MTBP_TGAGTCA.bed > right_MTBP.bed
 awk 'OFS = "\t"{print $0,".",".","-"}' left_MTBP_TGAGTCA.bed > left_MTBP.bed
 
@@ -82,11 +84,16 @@ awk 'OFS = "\t"{print $0,".",".","-"}' left_MTBP_TSS.bed > left_TSS_MTBP.bed;
 
 cat right_TSS_MTBP.bed left_TSS_MTBP.bed | sort -k 1,1 -k2,2n > MTBP_TSS_dir.bed
 ```
-***
-### Figures S5C and S5D
-Use these oriented files (MTBP_TGAGTCA_dir.bed and MTBP_TSS_dir.bed) to make matrix files for Figures S5C and S5D (FigureS5D.tab and FigureS5D.tab)
 
-```bash
+-----
+
+### Figures S5C and S5D
+
+Use these oriented files (MTBP\_TGAGTCA\_dir.bed and MTBP\_TSS\_dir.bed)
+to make matrix files for Figures S5C and S5D (FigureS5D.tab and
+FigureS5D.tab)
+
+``` bash
 # Figure S5C
 computeMatrix reference-point --referencePoint center -R MTBP_TGAGTCA_dir.bed \
 -S WT.bw MNase_hg38.bw H3K4me2_DLD1.bw H3K4me1.bigWig H3K4me2.bigWig H3K4me3.bigWig H3K9Ac.bigWig \
@@ -109,10 +116,12 @@ H3K27ac.bw DNase.bw YY1.bigWig G4H.bw --missingDataAsZero -a 1000 -b 1000 \
 plotProfile -m dir_MTBP_TSS.tab.gz -o dir_MTBP_TSS.pdf --yMax 12 0.14 40 4 20 50 20 15 4 15 0.05 --yMin 0 0.05 0 1 9 10 2 5 0 0 0.005  --refPointLabel "MTBP Peak Summit" \ --regionsLabel " " --samplesLabel MTBP MNase-seq H3K4me2_DLD H3K4me1 H3K4me2 H3K4me3 H3K9ac \
 H3K27ac DNase-seq YY1 G4 --outFileNameData FigureS5D.tab;
 ```
-***
-### Figures 5E and 5F\
 
-```r
+-----
+
+### Figures 5E and 5F  
+
+``` r
 library(tidyr)
 library(tibble)
 library(dplyr)
